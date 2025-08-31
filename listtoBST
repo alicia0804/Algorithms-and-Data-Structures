@@ -1,0 +1,97 @@
+#include <iostream>
+using namespace std;
+
+struct treenode {
+    int val;
+    treenode* left;
+    treenode* right;
+
+    //constructor for tree node 
+    treenode(int x) {
+        val = x;        
+        left = nullptr; 
+        right = nullptr; 
+    }
+};
+
+//node for a linked list
+struct listnode {
+    int val;
+    listnode* next;
+
+    listnode(int x) : val(x), next(nullptr) {}
+};
+
+class convertinglist {
+
+private:
+    //recursive function to build the balanced BST
+    treenode* sortedListToBSTRecursive(listnode*& head, int start, int end) {
+        if (start > end) {
+            return nullptr;
+        }
+
+        //recur for the left half of the list to build the left subtree
+        treenode* left = sortedListToBSTRecursive(head, start, (start + end) / 2 - 1);
+
+        //middle element of the list
+        treenode* root = new treenode(head->val);
+        root->left = left;
+
+        //we move the head pointer to the next node in the linked list
+        head = head->next;
+
+        //recur for the right half of the list to build the right subtree
+        root->right = sortedListToBSTRecursive(head, (start + end) / 2 + 1, end);
+
+        return root;
+    }
+
+public:
+    //function to count the number of nodes in the list
+    int count(listnode* head) {
+        int n = 0;
+        listnode* cur = head;
+        while (cur != nullptr) {
+            cur = cur->next;
+            n++;
+        }
+        return n;
+    }
+
+    //convert the sorted linked list to a balanced BST
+    treenode* sortedListToBST(listnode*& head) {
+        int n = count(head);
+        return sortedListToBSTRecursive(head, 0, n - 1);
+    }
+};
+
+//function to print the inorder traversal of the tree
+void inorder(treenode* root) {
+    if (root != nullptr) {
+        inorder(root->left);
+        cout << root->val << " ";
+        inorder(root->right);
+    }
+}
+
+int main() {
+   
+    listnode* head = new listnode(1);
+    head->next = new listnode(2);
+    head->next->next = new listnode(3);
+    head->next->next->next = new listnode(4);
+    head->next->next->next->next = new listnode(5);
+    head->next->next->next->next->next = new listnode(6);
+    head->next->next->next->next->next->next = new listnode(7);
+    head->next->next->next->next->next->next->next = new listnode(8);
+    head->next->next->next->next->next->next->next->next = new listnode(9);
+    
+   
+    convertinglist s;
+    treenode* root = s.sortedListToBST(head);
+    
+    inorder(root);
+    
+    return 0;
+}
