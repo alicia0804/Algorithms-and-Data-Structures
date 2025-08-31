@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+//this function performs three-way QuickSort and uses
+// the first two elements as pivots
+void sort3way(vector<int>& arr, int low, int high) {
+    if (low >= high) return;
+
+    if (high - low == 1) {//if we have 2 elem we sort them directly
+        if (arr[low] > arr[high]) swap(arr[low], arr[high]);
+        return;
+    }
+
+    if (arr[low] > arr[low + 1]) swap(arr[low], arr[low + 1]); 
+    //setting first elements as pivots
+    int p1 = arr[low], p2 = arr[low + 1]; 
+    vector<int> left, mid, right;  
+    //we have 3 conditions: if the number is smaller than pivot
+    //bigger than the largest pivot and between them both
+    for (int i = low + 2; i <= high; i++) {
+        if (arr[i] < p1) left.push_back(arr[i]);
+        else if (arr[i] > p2) right.push_back(arr[i]);
+        else mid.push_back(arr[i]); 
+    }
+
+    //we merge sort sections back into the array
+    int idx = low;
+    for (size_t i = 0; i < left.size(); i++){
+        arr[idx++] = left[i];
+    }
+    arr[idx++] = p1;
+    for (size_t i = 0; i < mid.size(); i++){
+    arr[idx++] = mid[i];
+    }
+    arr[idx++] = p2;
+    for (size_t i = 0; i < right.size(); i++){
+        arr[idx++] = right[i];
+    }
+
+    //we find new pivot positions
+    int p1Index = low + static_cast<int>(left.size());
+    int p2Index = p1Index + 1 + static_cast<int>(mid.size());
+
+    //we rcursively sort the three partitions
+    sort3way(arr, low, p1Index - 1);   
+    sort3way(arr, p1Index + 1, p2Index - 1);
+    sort3way(arr, p2Index + 1, high); 
+}
+
+int main() {
+    vector<int> nums = {7, 3, 12, 6, 1, 4, 8, 10, 13, 20, 15, 16, 40, 35}; 
+
+    cout << "We have elements before sorting: ";
+    for (size_t i = 0; i < nums.size(); i++) cout << nums[i] << " ";
+    cout << endl;
+
+    sort3way(nums, 0, static_cast<int>(nums.size()) - 1);
+
+    cout << "We have the elements after sorting: ";
+    for (size_t i = 0; i < nums.size(); i++) cout << nums[i] << " ";
+    cout << endl;
+
+    return 0;
+}
